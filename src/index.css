@@ -1,68 +1,157 @@
+/* 1. Import a retro GBA-style pixel font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+/* 2. Set up our Gen 3 Color Palette (Ruby/Sapphire/Emerald vibes) */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --gba-bg: #8898a8;         /* Slate gray for the "outside" background */
+  --gba-shell: #d85040;      /* Pokedex Red for the main container */
+  --gba-screen-bg: #f8f8f8;  /* Off-white for text boxes/screen */
+  --gba-border: #282828;     /* Almost black for chunky outlines */
+  --gba-text: #282828;       /* Standard text color */
+  --gba-blue: #3880b8;       /* Sapphire blue for highlights */
+  --gba-shadow: #c8c8c8;     /* Inner shadow for the screen depth */
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
+/* 3. Global Body Styles */
 body {
+  background-color: var(--gba-bg);
+  font-family: 'VT323', monospace; /* Applies the retro font */
+  color: var(--gba-text);
   margin: 0;
+  padding: 20px;
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  justify-content: center;
+  /* Optional: Adds a very faint "scanline" effect to the background */
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.05) 2px,
+    rgba(0, 0, 0, 0.05) 4px
+  );
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* 4. Main Container (The Gameboy/Pokedex Shell) */
+.app-container {
+  background-color: var(--gba-shell);
+  border: 4px solid var(--gba-border);
+  border-radius: 12px 12px 40px 12px; /* Bottom right corner curves more, like a GBA */
+  padding: 20px;
+  max-width: 800px;
+  width: 100%;
+  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.3); /* Retro chunky drop shadow */
 }
 
-button {
+h1.title {
+  text-align: center;
+  color: white;
+  text-shadow: 2px 2px 0px var(--gba-border);
+  font-size: 3rem;
+  letter-spacing: 2px;
+  margin-top: 0;
+  text-transform: uppercase;
+}
+
+/* 5. The Search Bar (GBA Text Input Box) */
+.search-bar {
+  width: 100%;
+  padding: 10px;
+  font-family: 'VT323', monospace;
+  font-size: 1.5rem;
+  background-color: var(--gba-screen-bg);
+  border: 4px solid var(--gba-border);
   border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+  color: var(--gba-text);
+  outline: none;
+  box-shadow: inset 4px 4px 0px var(--gba-shadow);
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.search-bar:focus {
+  border-color: var(--gba-blue);
+}
+
+/* 6. The Screen where the Pokemon render */
+.pokedex-screen {
+  background-color: var(--gba-screen-bg);
+  border: 4px solid var(--gba-border);
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+  box-shadow: inset 4px 4px 0px var(--gba-shadow);
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+/* 7. Individual Pokemon Card */
+.pokemon-card {
+  background-color: white;
+  border: 3px solid var(--gba-border);
+  border-radius: 6px;
+  width: 150px;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.1s;
+  /* Creates the classic GBA double-border look */
+  box-shadow: inset 0 0 0 2px var(--gba-blue), 4px 4px 0px rgba(0,0,0,0.15); 
+}
+
+.pokemon-card:hover {
+  transform: translateY(-4px);
+  /* Changes double border to red on hover */
+  box-shadow: inset 0 0 0 2px var(--gba-shell), 4px 8px 0px rgba(0,0,0,0.25); 
+}
+
+.pokemon-card img {
+  width: 48px;
+  height: 48px;
+  /* CRUCIAL: This stops the browser from blurring the pixel art! */
+  image-rendering: pixelated;
+  object-fit: contain; /* Ensure the image fits within the bounds without distortion */
+  background-color: #e8e8e8;
+  border-radius: 50%;
+  margin-bottom: 10px;
+  border: 2px solid #ccc;
+}
+
+.pokemon-name {
+  text-transform: uppercase; /* Gen 3 names were strictly ALL CAPS in menus */
+  font-size: 1.4rem;
+  margin: 0 0 10px 0;
+  font-weight: bold;
+}
+
+/* 8. Types Badges */
+.type-container {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+.type-badge {
+  font-size: 1.1rem;
+  padding: 2px 8px;
+  border: 2px solid var(--gba-border);
+  border-radius: 4px;
+  text-transform: uppercase;
+  background-color: #ddd;
+  color: var(--gba-text);
+  text-shadow: 1px 1px 0px white;
+}
+
+/* 9. Custom GBA-style Scrollbar */
+::-webkit-scrollbar {
+  width: 16px;
+}
+::-webkit-scrollbar-track {
+  background: var(--gba-screen-bg);
+  border-left: 4px solid var(--gba-border);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--gba-blue);
+  border: 2px solid var(--gba-border);
 }
